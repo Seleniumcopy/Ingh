@@ -5,8 +5,8 @@ S. No	Field Name	Test Case	Expected Result	Response Code
 		Negative: Set userID to "test12345678" (above max length)	Error: Max Length	400
 		Negative: Set userID to "test#123" (invalid characters)	Error: Character	400
 2	standardId	Positive: Set standardId to "zkpmane" (7 characters, alphanumeric)	Success	200
-		Negative: Set standardId to "zkp" (below length 7)	Error: Length	400
-		Negative: Set standardId to "zkpmane!" (invalid characters)	Error: Character	400
+		Negative: Set standardId to "" (below length 7)	Error: Length	400
+		Negative: Set standardId to "!" (invalid characters)	Error: Character	400
 3	userAddress	Positive: Include valid userAddress object	Success	200
 		Negative: Omit userAddress (mandatory field)	Error: Required	400
 4	addressLn1	Positive: Set addressLn1 to "San Luis Obispo"	Success	200
