@@ -1,28 +1,78 @@
-Field Name	Description	Positive Test Case	Negative Test Case	Expected Positive Response Code	Expected Negative Response Code		
-userID	Validates userID with alphanumeric characters and within length limits (6-11).	Provide valid alphanumeric userID within length limits, e.g., 'test123'.	Provide userID outside of length limits or with special characters, e.g., 'test123456789'.	200	400		
-standardId	Checks standardId with alphanumeric characters, required to be exactly 7 characters.	Provide valid standardId, e.g., 'zkpname'.	Provide invalid standardId format, e.g., '123456'.	200	400		
-addressLn1	Validates addressLn1 with alphanumeric characters and length between 1-40.	Provide valid addressLn1, e.g., '123 Elm Street'.	Provide invalid addressLn1 format, e.g., '123 Elm Street!!!'.	200	400		
-addressLn2	Validates addressLn2 with alphanumeric characters and length between 1-40.	Provide valid addressLn2, e.g., 'Apt 4B'.	Provide invalid addressLn2 format, e.g., 'Apt #4B'.	200	400		
-addressLn3	Validates addressLn3 with alphanumeric characters and length between 1-40.	Provide valid addressLn3, e.g., 'Floor 3'.	Provide invalid addressLn3 format, e.g., 'Floor 3$$'.	200	400		
-addressLn4	Validates addressLn4 with alphanumeric characters and length between 1-40.	Provide valid addressLn4, e.g., 'Building 5'.	Provide invalid addressLn4 format, e.g., 'Building@5'.	200	400		
-city	Ensures city contains alphabets and numbers with tono special characters and between 1-40 length.	Provide valid city name, e.g., 'San Francisco'.	Provide city name with special characters, e.g., 'San@Francisco'.	200	400		
-state	Validates state for alphabets, numbers, spaces, and is within length 1-40.	Provide valid state name, e.g., 'CA'.	Provide invalid state with special characters, e.g., 'C@'.	200	400		
-zip	Ensures zip is numeric and length between 1-15.	Provide valid numeric zip, e.g., '94538'.	Provide non-numeric zip, e.g., '94538A'.	200	400		
-country	Validates country with alphabetic characters and a length between 1-3.	Provide valid country code, e.g., 'US'.	Provide country name exceeding length, e.g., 'USA1'.	200	400		
-firstName	Checks firstName for alphanumeric characters, with length 1-30.	Provide valid first name, e.g., 'Alice'.	Provide invalid first name with special characters, e.g., 'Al!ce'.	200	400		
-lastName	Checks lastName for alphanumeric characters, with length 1-30.	Provide valid last name, e.g., 'Johnson'.	Provide invalid last name with special characters, e.g., 'J@hnson'.	200	400		
-middleInitial	Validates middleInitial for single alpha character.	Provide valid middle initial, e.g., 'M'.	Provide middle initial as non-alpha, e.g., '3'.	200	400		
-mobile	Ensures mobile number begins with numbers, and is 10-35 characters in length.	Provide valid mobile number, e.g., '8599449003'.	Provide mobile number with letters, e.g., '85994abcd03'.	200	400		
-phone	Validates phone with numbers, hyphens, and length 10-35.	Provide valid phone number, e.g., '612-252-5443'.	Provide phone number with letters, e.g., '612-25A-5443'.	200	400		
-phoneExtn	Checks phone extension format with alphanumeric characters.	Provide valid phone extension, e.g., '+1'.	Provide phone extension with invalid characters, e.g., '#123'.	200	400		
-fax	Validates fax for alphanumeric characters and format, with 35 characters max.	Provide valid fax number, e.g., '123456'.	Provide fax with letters, e.g., 'fax123'.	200	400		
-email	Validates email format, ensuring it contains '@' and a dot in correct positions.	Provide valid email format, e.g., 'alice@example.com'.	Provide invalid email format without '@' or '.', e.g., 'aliceatexampledotcom'.	200	400		
-emailSizeLimit	Checks email size limit to be within specified enum values.	Provide valid email size, e.g., 'TENMB'.	Provide email size not in enum, e.g., '1GB'.	200	400		
-userType	Ensures userType is one of the predefined enum values (e.g., PRIMARY_ADMINISTRATOR).	Provide valid user type, e.g., 'PRIMARY_ADMINISTRATOR'.	Provide user type not in enum, e.g., 'USER'.	200	400		
-actionType	Checks actionType for valid enum values.	Provide valid action type, e.g., 'ACTION_TYPE_ADD'.	Provide action type not in enum, e.g., 'DELETE_ACTION'.	200	400		
-isUserTypeModified	Validates isUserTypeModified as boolean (Yes/No).	Provide valid Yes/No for isUserTypeModified.	Provide isUserTypeModified not in Yes/No format, e.g., 'Maybe'.	200	400		
-authSigner	Checks authSigner as Yes/No enum value.	Provide valid Yes/No for authSigner.	Provide authSigner not in Yes/No format, e.g., 'True'.	200	400	j	
-userStatus	Ensures userStatus is within allowed status enum values.	Provide valid user status, e.g., 'USER_STATUS_ACTIVE'.	Provide invalid user status not in enum, e.g., 'STATUS_UNKNOWN'.	200	400		
-mobileCountryCode	Validates mobileCountryCode as alpha characters within 1-2 length.	Provide valid mobile country code, e.g., 'US'.	Provide mobile country code exceeding length, e.g., 'USA'.	200	400		
-phoneCountryCode	Validates phoneCountryCode as alpha characters within 1-2 length.	Provide valid phone country code, e.g., 'US'.	Provide phone country code exceeding length, e.g., 'USX'.	200	400		
-faxCountryCode	Ensures faxCountryCode is numeric with hyphens, 35 characters max.	Provide valid fax country code, e.g., '24234'.	Provide fax country code with invalid characters, e.g., '24-AB'.	200	400		
+S. No	Field Name	Test Case	Expected Result	Response Code
+1	userID	Positive: Set userID to "test123" (6 characters, alphanumeric)	Success	200
+		Negative: Omit userID (mandatory field)	Error: Required	400
+		Negative: Set userID to "test" (below min length)	Error: Min Length	400
+		Negative: Set userID to "test12345678" (above max length)	Error: Max Length	400
+		Negative: Set userID to "test#123" (invalid characters)	Error: Character	400
+2	standardId	Positive: Set standardId to "zkpmane" (7 characters, alphanumeric)	Success	200
+		Negative: Set standardId to "zkp" (below length 7)	Error: Length	400
+		Negative: Set standardId to "zkpmane!" (invalid characters)	Error: Character	400
+3	userAddress	Positive: Include valid userAddress object	Success	200
+		Negative: Omit userAddress (mandatory field)	Error: Required	400
+4	addressLn1	Positive: Set addressLn1 to "San Luis Obispo"	Success	200
+		Negative: Omit addressLn1 (mandatory field)	Error: Required	400
+		Negative: Set addressLn1 to "A@#%^!" (invalid characters)	Error: Character	400
+		Negative: Set addressLn1 to "S" (below min length 1)	Error: Min Length	400
+		Negative: Set addressLn1 to 50 characters (above max length 40)	Error: Max Length	400
+5	addressLn2	Positive: Set addressLn2 to "San Luis Obispo"	Success	200
+		Negative: Set addressLn2 to "San @ Luis" (invalid characters)	Error: Character	400
+		Negative: Set addressLn2 to 50 characters (above max length 40)	Error: Max Length	400
+6	addressLn3	Positive: Set addressLn3 to "San Luis Obispo"	Success	200
+		Negative: Set addressLn3 to 50 characters (above max length 40)	Error: Max Length	400
+7	addressLn4	Positive: Set addressLn4 to "San Luis Obispo"	Success	200
+		Negative: Set addressLn4 to 50 characters (above max length 40)	Error: Max Length	400
+8	city	Positive: Set city to "San Luis Obispo"	Success	200
+		Negative: Omit city (mandatory field)	Error: Required	400
+		Negative: Set city to "New York@!" (invalid characters)	Error: Character	400
+		Negative: Set city to 31 characters (above max length 30)	Error: Max Length	400
+9	state	Positive: Set state to "CA"	Success	200
+		Negative: Omit state (mandatory field)	Error: Required	400
+		Negative: Set state to "California!" (invalid characters)	Error: Character	400
+		Negative: Set state to 16 characters (above max length 15)	Error: Max Length	400
+10	zip	Positive: Set zip to "94538123"	Success	200
+		Negative: Omit zip (mandatory field)	Error: Required	400
+		Negative: Set zip to "9a453812" (non-numeric characters)	Error: Character	400
+11	country	Positive: Set country to "US"	Success	200
+		Negative: Omit country (mandatory field)	Error: Required	400
+12	firstName	Positive: Set firstName to "James"	Success	200
+		Negative: Omit firstName (mandatory field)	Error: Required	400
+		Negative: Set firstName to "James@123" (invalid characters)	Error: Character	400
+13	lastName	Positive: Set lastName to "Williams"	Success	200
+		Negative: Omit lastName (mandatory field)	Error: Required	400
+14	middleInitial	Positive: Set middleInitial to "M"	Success	200
+		Negative: Set middleInitial to "Mi" (above max length 1)	Error: Max Length	400
+		Negative: Set middleInitial to "3" (non-alpha character)	Error: Character	400
+15	mobile	Positive: Set mobile to "8599490030"	Success	200
+		Negative: Set mobile to "8599490030a" (non-numeric character)	Error: Character	400
+		Negative: Set mobile to 9 characters (below min length 10)	Error: Min Length	400
+16	phone	Positive: Set phone to "612-252-5443"	Success	200
+		Negative: Set phone to "6122525443@" (invalid characters)	Error: Character	400
+17	phoneExtn	Positive: Set phoneExtn to "+1"	Success	200
+18	fax	Positive: Set fax to "12313"	Success	200
+		Negative: Set fax to "12313a" (non-numeric character)	Error: Character	400
+19	email	Positive: Set email to "test1@test.com"	Success	200
+		Negative: Set email to "test1@.com" (invalid format)	Error: Format	400
+		Negative: Set email to "test..com" (invalid format)	Error: Format	400
+20	emailSizeLimit	Positive: Set emailSizeLimit to "TENMB"	Success	200
+		Negative: Set emailSizeLimit to "HUNDREDMB" (invalid enum value)	Error: Enum	400
+21	userType	Positive: Set userType to "PRIMARY_ADMINISTRATOR"	Success	200
+
+22	userType	Positive: Set userType to "PRIMARY_ADMINISTRATOR" (valid enum value)	Success	200
+		Negative: Set userType to "INVALID_TYPE" (invalid enum value)	Error: Enum	400
+23	authSigner	Positive: Set authSigner to "Yes" (valid enum value)	Success	200
+		Negative: Set authSigner to "Invalid" (invalid enum value)	Error: Enum	400
+24	userStatus	Positive: Set userStatus to "USER_STATUS_ACTIVE" (valid enum value)	Success	200
+		Negative: Set userStatus to "USER_STATUS_INVALID" (invalid enum value)	Error: Enum	400
+25	mobileCountryCode	Positive: Set mobileCountryCode to "US" (2 alpha characters)	Success	200
+		Negative: Set mobileCountryCode to "USA" (above max length 2)	Error: Max Length	400
+		Negative: Set mobileCountryCode to "U1" (non-alpha character)	Error: Character	400
+26	phoneCountryCode	Positive: Set phoneCountryCode to "US" (2 alpha characters)	Success	200
+		Negative: Set phoneCountryCode to "USA" (above max length 2)	Error: Max Length	400
+		Negative: Set phoneCountryCode to "U1" (non-alpha character)	Error: Character	400
+27	faxCountryCode	Positive: Set faxCountryCode to "24234" (numeric, within max length 5)	Success	200
+		Negative: Set faxCountryCode to "242345" (above max length 5)	Error: Max Length	400
+		Negative: Set faxCountryCode to "24A34" (non-numeric character)	Error: Character	400
+28	actionType	Positive: Set actionType to "ACTION_TYPE_ADD" (valid enum value)	Success	200
+		Negative: Set actionType to "INVALID_ACTION" (invalid enum value)	Error: Enum	400
+29	isUserType	Positive: Set isUserType to "Yes"	Success	200
+		Negative: Set isUserType to "Invalid" (invalid value)	Error: Enum	400
