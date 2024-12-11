@@ -1,204 +1,132 @@
-Yes, it's possible to save each 
-
-
----
-
-
-import org.apache.poi.xwpf.usermodel.*;
-import org.openqa.selenium.*;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.io.FileHandler;
 
-import java.io.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 public class WsdlScreenshotToWord {
 
     public static void main(String[] args) {
-        // List of URLs to visit
+        // List of WSDL URLs to visit
         List<String> wsdlUrls = List.of(
-            "https://example.com/wsdl1",
-            "https://example.com/wsdl2",
-            "https://example.com/wsdl3"
+            "https://sit1a.example.com/wsdl1",
+            "https://sit1b.example.com/wsdl2",
+            "https://sit1a.example.com/wsdl3"
         );
 
         // Set up WebDriver (ensure you have ChromeDriver in PATH)
         System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
         WebDriver driver = new ChromeDriver();
 
-        // Create a Word document
-        XWPFDocument document = new XWPFDocument();
-
         try {
             for (String url : wsdlUrls) {
                 driver.get(url);
 
                 // Wait for the page to load
-                Thread.sleep(2000);
+                Thread.sleep(3000);
 
-   cs             // Scroll to the  section (adjust the locator as needed)
-                WebElement cs = driver.findElement(By.xpath("//*[contains(text(), 'CompanyStatus')]"));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", companyStatusElement);
+                // Extract environment and WSDL name from URL
+                String environment = extractEnvironment(url);
+                String wsdlName = extractWsdlName(url);
 
-                // Wait for scroll to complete
-                Thread.sleep(1000);
+                // Take screenshot of the full screen using Robot
+                File screenshotFile = takeScreenshotWithRobot(environment, wsdlName);
 
-                // Take a screenshot
-                File screenshotFile = takeScreenshot(driver, url);
+                // Create a Word document with the screenshot
+                createWordDocument(environment, wsdlName, screenshotFile);
 
-                // Add screenshot to the Word document
-                addScreenshotToWord(document, screenshotFile, url);
-
-                System.out.println("Screenshot added for URL: " + url);
+                System.out.println("Document created for: " + url);
             }
-
-            // Save the Word document
-            try (FileOutputStream out = new FileOutputStream("WSDL_Screenshots.docx")) {
-                document.write(out);
-            }
-
-            System.out.println("Screenshots saved to Word document.");
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             // Close the browser
             driver.quit();
-
-            // Close the Word document
-            try {
-                document.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    public static File takeScreenshot(WebDriver driver, String url) {
-        try {
-            // Take a screenshot
-            File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-
-            // Create a clean filename based on the URL
-            String fileName = url.replaceAll("[^a-zA-Z0-9]", "_") + ".png";
-
-            // Save the screenshot
-            File screenshotFile = new File("./" + fileName);
-            FileHandler.copy(srcFile, screenshotFile);
-            return screenshotFile;
-        } catch (Exception e) {
-            System.out.println("Error taking screenshot for URL: " + url);
-            e.printStackTrace();
-            return null;
-        }
+    /**
+     * Extracts the environment (e.g., sit1a, sit1b) from the URL.
+     */
+    public static String extractEnvironment(String url) {
+        return url.split("\\.")[0].replace("https://", "");
     }
 
-    public static void addScreenshotToWord(XWPFDocument document, File screenshotFile, String url) {
-        try {
-            // Add a title for the URL
-            XWPFParagraph paragraph = document.createParagraph();
-            XWPFRun run = paragraph.createRun();
-            run.setText("Screenshot for URL: " + url);
-            run.setBold(true);
+    /**
+     * Extracts the WSDL name from the URL.
+     */
+    public static String extractWsdlName(String url) {
+        return url.substring(url.lastIndexOf("/") + 1).replace(".wsdl", "");
+    }
 
-            // Add the screenshot as an image
-            if (screenshotFile != null && screenshotFile.exists()) {
-                InputStream is = new FileInputStream(screenshotFile);
-                document.addPictureData(is, XWPFDocument.PICTURE_TYPE_PNG);
-                is.close();
+    /**
+     * Takes a screenshot of the full screen using Robot and saves it as a file.
+     */
+    public static File takeScreenshotWithRobot(String environment, String wsdlName) throws Exception {
+        // Capture the full screen
+        Robot robot = new Robot();
+        Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        BufferedImage screenCapture = robot.createScreenCapture(screenRect);
 
-                XWPFParagraph imageParagraph = document.createParagraph();
-                XWPFRun imageRun = imageParagraph.createRun();
-                imageRun.addPicture(
-                    new FileInputStream(screenshotFile),
-                    XWPFDocument.PICTURE_TYPE_PNG,
-                    screenshotFile.getName(),
-                    Units.toEMU(500), // Width in EMUs
-                    Units.toEMU(300)  // Height in EMUs
-                );
-            }
-        } catch (Exception e) {
-            System.out.println("Error adding screenshot to Word document for URL: " + url);
-            e.printStackTrace();
+        // Generate filename with environment and WSDL name
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String fileName = environment + "_" + wsdlName + "_" + timestamp + ".png";
+
+        // Save the screenshot to the screenshots/ directory
+        File screenshotFile = new File("./screenshots/" + fileName);
+        screenshotFile.getParentFile().mkdirs(); // Ensure directory exists
+        ImageIO.write(screenCapture, "png", screenshotFile);
+
+        System.out.println("Screenshot saved as: " + screenshotFile.getAbsolutePath());
+        return screenshotFile;
+    }
+
+    /**
+     * Creates a Word document and inserts the screenshot.
+     */
+    public static void createWordDocument(String environment, String wsdlName, File screenshotFile) throws Exception {
+        // Create a new Word document
+        XWPFDocument document = new XWPFDocument();
+
+        // Add a title paragraph
+        XWPFParagraph title = document.createParagraph();
+        XWPFRun titleRun = title.createRun();
+        titleRun.setBold(true);
+        titleRun.setFontSize(14);
+        titleRun.setText("Environment: " + environment + " | WSDL: " + wsdlName);
+        titleRun.addBreak();
+
+        // Add the screenshot image
+        XWPFParagraph imageParagraph = document.createParagraph();
+        XWPFRun imageRun = imageParagraph.createRun();
+        imageRun.addPicture(
+            new FileInputStream(screenshotFile),
+            XWPFDocument.PICTURE_TYPE_PNG,
+            screenshotFile.getName(),
+            Units.toEMU(500), // Width in EMUs
+            Units.toEMU(300)  // Height in EMUs
+        );
+
+        // Generate Word document filename
+        String docFileName = "./documents/" + environment + "_" + wsdlName + ".docx";
+        File wordFile = new File(docFileName);
+        wordFile.getParentFile().mkdirs(); // Ensure directory exists
+
+        // Save the Word document
+        try (FileOutputStream out = new FileOutputStream(wordFile)) {
+            document.write(out);
         }
+
+        System.out.println("Word document saved as: " + wordFile.getAbsolutePath());
     }
 }
-
-
----
-
-Explanation:
-
-1. Take Screenshots:
-
-The takeScreenshot method captures a screenshot using Selenium and saves it as a PNG file.
-
-
-
-2. Create a Word Document:
-
-The program creates an instance of XWPFDocument to represent the Word document.
-
-
-
-3. Add Screenshots to Word:
-
-The addScreenshotToWord method adds a heading with the URL and embeds the screenshot below it.
-
-
-
-4. Save the Document:
-
-At the end of the process, the document is saved as WSDL_Screenshots.docx.
-
-
-
-
-
----
-
-Steps to Run:
-
-1. Set Up WebDriver:
-
-Ensure you have the correct WebDriver for your browser.
-
-
-
-2. Compile and Run:
-
-Compile:
-
-javac -cp .:selenium-java-4.x.x.jar:poi-ooxml-5.x.x.jar WsdlScreenshotToWord.java
-
-Run:
-
-java -cp .:selenium-java-4.x.x.jar:poi-ooxml-5.x.x.jar WsdlScreenshotToWord
-
-
-
-3. Output:
-
-The Word file WSDL_Screenshots.docx will contain screenshots for each URL.
-
-
-
-
-
----
-
-Example Word Output:
-
-Page 1:
-
-Screenshot for URL: https://example.com/wsdl1
-[Screenshot Image]
-
-Page 2:
-
-Screenshot for URL: https://example.com/wsdl2
-[Screenshot Image]
-
-
-Let me k
-
