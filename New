@@ -75,3 +75,5 @@ public void user_logs_in(String username, String password) {
 
 If you want, I can generate some ready-to-use step definitions based on your specific test steps. Just give me your Gherkin line or scenario.
 
+https://api.example.com/status.
+
