@@ -1,0 +1,114 @@
+Perfect! To tailor your request further, here's a refined prompt — and right after that, I’ll give you a complete working example with:
+
+Feature file
+
+Step definitions
+
+Java code using RestAssured
+
+Including custom headers
+
+API call and response validation
+
+
+
+---
+
+✅ Updated Prompt to Use:
+
+> Generate a BDD test using Java, Cucumber, and RestAssured.
+
+1. Create a feature file that sends a GET request to the API https://api.example.com/status.
+
+
+2. The request should include a header: Authorization: Bearer <token>.
+
+
+3. The response should return status code 200 and JSON field status should be "done".
+
+
+4. Provide the full Java step definitions with RestAssured code and JUnit assertions.
+
+
+
+
+
+
+---
+
+🧪 Sample Output
+
+📄 api_check.feature
+
+Feature: API status check with header
+
+  Scenario: Verify API returns status 200 and response status is "done"
+    Given I send a GET request to "https://api.example.com/status" with header "Authorization" as "Bearer my_token_123"
+    Then the response status code should be 200
+    And the response should contain "status" with value "done"
+
+
+---
+
+📁 ApiSteps.java
+
+import io.cucumber.java.en.*;
+import io.restassured.response.Response;
+
+import static io.restassured.RestAssured.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ApiSteps {
+
+    private Response response;
+
+    @Given("I send a GET request to {string} with header {string} as {string}")
+    public void i_send_a_get_request_with_header(String url, String headerName, String headerValue) {
+        response = given()
+                       .header(headerName, headerValue)
+                   .when()
+                       .get(url);
+    }
+
+    @Then("the response status code should be {int}")
+    public void the_response_status_code_should_be(int expectedStatusCode) {
+        assertEquals(expectedStatusCode, response.getStatusCode(), "Unexpected status code");
+    }
+
+    @Then("the response should contain {string} with value {string}")
+    public void the_response_should_contain_with_value(String key, String expectedValue) {
+        String actualValue = response.jsonPath().getString(key);
+        assertEquals(expectedValue, actualValue, "Unexpected value for key: " + key);
+    }
+}
+
+
+---
+
+🧱 Dependencies Required (Maven)
+
+Make sure your pom.xml has these:
+
+<dependencies>
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>7.14.0</version>
+    </dependency>
+    <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>5.4.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.10.2</version>
+    </dependency>
+</dependencies>
+
+
+---
+
+Would you like me to tailor the headers (e.g. add Content-Type, Accept, or dynamic token handling)? Or would you prefer a POST request example too?
+
