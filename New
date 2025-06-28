@@ -1,0 +1,77 @@
+To create step definitions in a BDD Java framework (like Cucumber with Java), you’ll want to use a prompt that clearly communicates the following:
+
+1. The Gherkin step you want to define.
+
+
+2. The intended logic or behavior to implement in Java.
+
+
+3. Any frameworks or tools (e.g., Selenium, RestAssured, JUnit, etc.) you’re using.
+
+
+4. Context or variable details, if any (like page objects, endpoints, or data).
+
+
+
+
+---
+
+✅ Sample Prompt Template (for ChatGPT or any code generator):
+
+> "Generate a step definition in Java for a Cucumber BDD test. The Gherkin step is: Given the user logs in with username 'admin' and password 'admin123'. Use Selenium WebDriver to perform login using a Page Object model."
+
+
+
+
+---
+
+🧪 Prompt Examples for Different Scenarios:
+
+📌 Web Automation (Selenium):
+
+> Generate a Java step definition for When the user clicks on the login button using Selenium and Page Object Model.
+
+
+
+📌 API Testing (RestAssured):
+
+> Create a step definition in Java for Then the response status code should be 200. Use RestAssured for making the API call.
+
+
+
+📌 Data-Driven:
+
+> Write a Java step definition for Given the user enters the following credentials and use a Cucumber DataTable to map the data.
+
+
+
+📌 Assertions:
+
+> Generate a step definition for Then the dashboard should be visible using JUnit assertions and Selenium.
+
+
+
+📌 Background Setup:
+
+> Write a Java step definition for Given the application is running that starts a local server using Spring Boot before running tests.
+
+
+
+
+---
+
+📄 Output Example (from a sample prompt):
+
+@Given("the user logs in with username {string} and password {string}")
+public void user_logs_in(String username, String password) {
+    LoginPage loginPage = new LoginPage(driver);
+    loginPage.enterUsername(username);
+    loginPage.enterPassword(password);
+    loginPage.clickLogin();
+}
+
+
+---
+
+If you want, I can generate some ready-to-use step definitions based on your specific test steps. Just give me your Gherkin line or scenario.
+
